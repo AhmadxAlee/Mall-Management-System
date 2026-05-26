@@ -106,4 +106,8 @@ Then run the SQL migrations from `database/migrations/`.
 
 ## Author
 
-Developed for U Devs Hackathon 2026
+Ahmad Ali
+
+## Event
+
+Built for U Devs Hackathon 2026
