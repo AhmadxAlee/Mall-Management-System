@@ -37,12 +37,22 @@ export const fetchAISummary = createAsyncThunk('dashboard/fetchAISummary', async
   }
 })
 
+export const fetchEmployeeStats = createAsyncThunk('dashboard/fetchEmployeeStats', async (_, { rejectWithValue }) => {
+  try {
+    const { data } = await api.get('/dashboard/employee-stats')
+    return data
+  } catch (err) {
+    return rejectWithValue(err.response?.data?.message || 'Failed to fetch employee stats')
+  }
+})
+
 const dashboardSlice = createSlice({
   name: 'dashboard',
   initialState: {
     stats: null,
     recentActivity: null,
     inventoryOverview: null,
+    employeeStats: [],
     aiSummary: null,
     aiLoading: false,
     loading: false,
@@ -72,6 +82,9 @@ const dashboardSlice = createSlice({
       })
       .addCase(fetchInventoryOverview.fulfilled, (state, action) => {
         state.inventoryOverview = action.payload.data.inventory
+      })
+      .addCase(fetchEmployeeStats.fulfilled, (state, action) => {
+        state.employeeStats = action.payload.data.employeeStats
       })
       .addCase(fetchAISummary.pending, (state) => {
         state.aiLoading = true

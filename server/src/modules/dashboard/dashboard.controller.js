@@ -82,3 +82,21 @@ export const getInventoryOverview = catchAsync(async (req, res) => {
     data: { inventory: rows[0] },
   })
 })
+
+export const getEmployeeStats = catchAsync(async (req, res) => {
+  const { rows } = await query(
+    `SELECT 
+      COALESCE(department, 'Unassigned') as department,
+      COUNT(*) as count,
+      role
+     FROM employees
+     WHERE is_active = true
+     GROUP BY department, role
+     ORDER BY count DESC`
+  )
+
+  res.status(200).json({
+    status: 'success',
+    data: { employeeStats: rows },
+  })
+})
