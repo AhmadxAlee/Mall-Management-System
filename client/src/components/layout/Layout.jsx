@@ -1,13 +1,23 @@
 import { Outlet } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import Sidebar from './Sidebar'
+import { useTheme } from '../../utils/ThemeContext'
 
 const Layout = () => {
+  const { isDark } = useTheme()
+
   return (
-    <div className="flex min-h-screen bg-slate-50">
+    <div className={`flex min-h-screen ${isDark ? 'bg-slate-900' : 'bg-slate-50'}`}>
       <Sidebar />
-      <main style={{ marginLeft: '256px', width: 'calc(100% - 256px)' }} className="p-8 overflow-x-hidden">
+      <motion.main
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
+        style={{ marginLeft: '256px', width: 'calc(100% - 256px)' }}
+        className="p-8 overflow-x-hidden"
+      >
         <Outlet />
-      </main>
+      </motion.main>
     </div>
   )
 }
