@@ -13,10 +13,12 @@ const Layout = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3 }}
-        style={{ marginLeft: '256px', width: 'calc(100% - 256px)' }}
-        className="p-8 overflow-x-hidden"
+        className="flex-1 p-4 lg:p-8 overflow-x-hidden pt-16 lg:pt-8"
+        style={{ marginLeft: '0', paddingLeft: '1rem' }}
       >
-        <Outlet />
+        <div className="lg:ml-64">
+          <Outlet />
+        </div>
       </motion.main>
     </div>
   )
