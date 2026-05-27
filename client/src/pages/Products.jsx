@@ -11,8 +11,8 @@ import Pagination from '../components/ui/Pagination'
 import Modal from '../components/ui/Modal'
 
 const emptyForm = { outlet_id: '', name: '', description: '', price: '', category: '', sku: '', quantity: '', min_stock_level: '' }
-const inputClass = "w-full px-3 py-2.5 text-sm rounded-xl text-white placeholder-pink-300/50 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-all"
-const inputStyle = { background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)' }
+const iClass = "w-full px-3 py-2.5 text-sm rounded-xl text-white placeholder-white/20 focus:outline-none focus:ring-2 transition-all"
+const iStyle = { background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.08)' }
 
 const Products = () => {
   const dispatch = useDispatch()
@@ -39,15 +39,10 @@ const Products = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     const payload = { ...form, price: Number(form.price), quantity: form.quantity ? Number(form.quantity) : 0, min_stock_level: form.min_stock_level ? Number(form.min_stock_level) : 10 }
-    if (editing) {
-      const res = await dispatch(updateProduct({ id: editing.id, ...payload }))
-      if (res.meta.requestStatus === 'fulfilled') { toast.success('Product updated'); setModalOpen(false) }
-      else toast.error(res.payload)
-    } else {
-      const res = await dispatch(createProduct(payload))
-      if (res.meta.requestStatus === 'fulfilled') { toast.success('Product created'); setModalOpen(false) }
-      else toast.error(res.payload)
-    }
+    const action = editing ? updateProduct({ id: editing.id, ...payload }) : createProduct(payload)
+    const res = await dispatch(action)
+    if (res.meta.requestStatus === 'fulfilled') { toast.success(editing ? 'Product updated' : 'Product created'); setModalOpen(false) }
+    else toast.error(res.payload)
   }
 
   const handleDelete = async (id) => {
@@ -62,12 +57,10 @@ const Products = () => {
       key: 'name', label: 'Product',
       render: (row) => (
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white text-sm font-bold" style={{ background: 'linear-gradient(135deg, #fa709a, #fee140)' }}>
-            {row.name.charAt(0)}
-          </div>
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold" style={{ background: '#c026d3' }}>{row.name.charAt(0)}</div>
           <div>
             <p className="font-medium text-white">{row.name}</p>
-            <p className="text-xs text-pink-300">{row.sku || 'No SKU'}</p>
+            <p className="text-xs text-white/30">{row.sku || 'No SKU'}</p>
           </div>
         </div>
       ),
@@ -79,8 +72,8 @@ const Products = () => {
       key: 'quantity', label: 'Stock',
       render: (row) => (
         <div className="flex items-center gap-2">
-          <span className={`font-semibold ${row.quantity <= row.min_stock_level ? 'text-rose-400' : 'text-white'}`}>{row.quantity}</span>
-          {row.quantity <= row.min_stock_level && <AlertTriangle size={14} className="text-rose-400" />}
+          <span className={`font-medium ${row.quantity <= row.min_stock_level ? 'text-red-400' : 'text-white'}`}>{row.quantity}</span>
+          {row.quantity <= row.min_stock_level && <AlertTriangle size={13} className="text-red-400" />}
         </div>
       ),
     },
@@ -88,8 +81,8 @@ const Products = () => {
       key: 'actions', label: '',
       render: (row) => (
         <div className="flex items-center gap-2">
-          <button onClick={() => openEdit(row)} className="p-1.5 rounded-lg text-pink-300 hover:text-white transition-colors" style={{ background: 'rgba(244,114,182,0.1)' }}><Pencil size={15} /></button>
-          <button onClick={() => handleDelete(row.id)} className="p-1.5 rounded-lg text-pink-300 hover:text-white transition-colors" style={{ background: 'rgba(244,114,182,0.1)' }}><Trash2 size={15} /></button>
+          <button onClick={() => openEdit(row)} className="p-1.5 rounded-lg text-white/40 hover:text-white transition-colors" style={{ background: 'rgba(255,255,255,0.05)' }}><Pencil size={14} /></button>
+          <button onClick={() => handleDelete(row.id)} className="p-1.5 rounded-lg text-white/40 hover:text-red-400 transition-colors" style={{ background: 'rgba(255,255,255,0.05)' }}><Trash2 size={14} /></button>
         </div>
       ),
     },
@@ -99,35 +92,30 @@ const Products = () => {
     <div>
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #fa709a, #fee140)' }}>
-            <Package size={20} className="text-white" />
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: '#c026d3' }}>
+            <Package size={19} className="text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-white">Products</h1>
-            <p className="text-sm text-pink-300">{total} total products</p>
+            <h1 className="text-xl font-bold text-white">Products</h1>
+            <p className="text-sm text-white/40">{total} total</p>
           </div>
         </div>
-        <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={openCreate}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white"
-          style={{ background: 'linear-gradient(135deg, #f472b6, #fb923c)' }}>
-          <Plus size={16} /> Add Product
-        </motion.button>
+        <button onClick={openCreate} className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium text-white hover:opacity-90 transition-opacity" style={{ background: '#c026d3' }}>
+          <Plus size={15} /> Add Product
+        </button>
       </motion.div>
-
       <div className="mb-4 max-w-sm">
         <SearchBar value={search} onChange={(val) => { setSearch(val); setCurrentPage(1) }} placeholder="Search products..." />
       </div>
-
       <Table columns={columns} data={products} loading={loading} emptyMessage="No products found" />
       <Pagination page={currentPage} limit={limit} total={total} onPageChange={setCurrentPage} />
-
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={editing ? 'Edit Product' : 'Add Product'}>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-pink-200 mb-1">Outlet</label>
-            <select value={form.outlet_id} onChange={(e) => setForm({ ...form, outlet_id: e.target.value })} className={inputClass} style={inputStyle}>
-              <option value="" style={{ background: '#1a0533' }}>Select an outlet</option>
-              {outlets.map((o) => <option key={o.id} value={o.id} style={{ background: '#1a0533' }}>{o.name}</option>)}
+            <label className="block text-xs font-medium text-white/50 mb-1">Outlet</label>
+            <select value={form.outlet_id} onChange={(e) => setForm({ ...form, outlet_id: e.target.value })} className={iClass} style={iStyle}>
+              <option value="" style={{ background: '#1a0a2e' }}>Select an outlet</option>
+              {outlets.map((o) => <option key={o.id} value={o.id} style={{ background: '#1a0a2e' }}>{o.name}</option>)}
             </select>
           </div>
           {[
@@ -139,17 +127,17 @@ const Products = () => {
             { label: 'Min Stock Level', key: 'min_stock_level', type: 'number' },
           ].map(({ label, key, type, required }) => (
             <div key={key}>
-              <label className="block text-sm font-medium text-pink-200 mb-1">{label}</label>
-              <input type={type} value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} required={required} className={inputClass} style={inputStyle} />
+              <label className="block text-xs font-medium text-white/50 mb-1">{label}</label>
+              <input type={type} value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} required={required} className={iClass} style={iStyle} />
             </div>
           ))}
           <div>
-            <label className="block text-sm font-medium text-pink-200 mb-1">Description</label>
-            <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} className={`${inputClass} resize-none`} style={inputStyle} />
+            <label className="block text-xs font-medium text-white/50 mb-1">Description</label>
+            <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} className={`${iClass} resize-none`} style={iStyle} />
           </div>
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={() => setModalOpen(false)} className="flex-1 px-4 py-2.5 text-sm rounded-xl text-pink-300 hover:text-white transition-colors" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>Cancel</button>
-            <button type="submit" className="flex-1 px-4 py-2.5 text-sm rounded-xl text-white font-medium" style={{ background: 'linear-gradient(135deg, #f472b6, #fb923c)' }}>{editing ? 'Update' : 'Create'}</button>
+            <button type="button" onClick={() => setModalOpen(false)} className="flex-1 px-4 py-2.5 text-sm rounded-xl text-white/50 hover:text-white transition-colors" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>Cancel</button>
+            <button type="submit" className="flex-1 px-4 py-2.5 text-sm rounded-xl text-white font-medium" style={{ background: '#c026d3' }}>{editing ? 'Update' : 'Create'}</button>
           </div>
         </form>
       </Modal>
