@@ -8,15 +8,14 @@ import Table from '../components/ui/Table'
 import SearchBar from '../components/ui/SearchBar'
 import Pagination from '../components/ui/Pagination'
 import Modal from '../components/ui/Modal'
-import { useTheme } from '../utils/ThemeContext'
 
 const emptyForm = { name: '', floor: '', total_stalls: '' }
+const inputClass = "w-full px-3 py-2.5 text-sm rounded-xl text-white placeholder-pink-300/50 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-all"
+const inputStyle = { background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)' }
 
 const FoodCourt = () => {
   const dispatch = useDispatch()
   const { foodCourts, total, page, limit, loading } = useSelector((state) => state.foodCourt)
-  const { isDark } = useTheme()
-
   const [search, setSearch] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const [modalOpen, setModalOpen] = useState(false)
@@ -55,17 +54,15 @@ const FoodCourt = () => {
     else toast.error(res.payload)
   }
 
-  const inputClass = `w-full px-3 py-2.5 text-sm rounded-xl border focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all ${isDark ? 'bg-slate-700 border-slate-600 text-white placeholder-slate-400' : 'bg-slate-50 border-slate-200 text-slate-800'}`
-
   const columns = [
     {
       key: 'name', label: 'Name',
       render: (row) => (
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white text-sm font-bold" style={{ background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)' }}>
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white text-sm font-bold" style={{ background: 'linear-gradient(135deg, #43e97b, #38f9d7)' }}>
             {row.name.charAt(0)}
           </div>
-          <span className={`font-medium ${isDark ? 'text-white' : 'text-slate-700'}`}>{row.name}</span>
+          <span className="font-medium text-white">{row.name}</span>
         </div>
       ),
     },
@@ -75,12 +72,8 @@ const FoodCourt = () => {
       key: 'actions', label: '',
       render: (row) => (
         <div className="flex items-center gap-2">
-          <button onClick={() => openEdit(row)} className={`p-1.5 rounded-lg transition-colors ${isDark ? 'text-slate-400 hover:bg-indigo-500/20 hover:text-indigo-400' : 'text-slate-400 hover:bg-indigo-50 hover:text-indigo-600'}`}>
-            <Pencil size={15} />
-          </button>
-          <button onClick={() => handleDelete(row.id)} className={`p-1.5 rounded-lg transition-colors ${isDark ? 'text-slate-400 hover:bg-rose-500/20 hover:text-rose-400' : 'text-slate-400 hover:bg-rose-50 hover:text-rose-600'}`}>
-            <Trash2 size={15} />
-          </button>
+          <button onClick={() => openEdit(row)} className="p-1.5 rounded-lg text-pink-300 hover:text-white transition-colors" style={{ background: 'rgba(244,114,182,0.1)' }}><Pencil size={15} /></button>
+          <button onClick={() => handleDelete(row.id)} className="p-1.5 rounded-lg text-pink-300 hover:text-white transition-colors" style={{ background: 'rgba(244,114,182,0.1)' }}><Trash2 size={15} /></button>
         </div>
       ),
     },
@@ -90,20 +83,17 @@ const FoodCourt = () => {
     <div>
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)' }}>
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #43e97b, #38f9d7)' }}>
             <UtensilsCrossed size={20} className="text-white" />
           </div>
           <div>
-            <h1 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-slate-800'}`}>Food Court</h1>
-            <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{total} total food courts</p>
+            <h1 className="text-2xl font-bold text-white">Food Court</h1>
+            <p className="text-sm text-pink-300">{total} total food courts</p>
           </div>
         </div>
-        <motion.button
-          whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-          onClick={openCreate}
+        <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={openCreate}
           className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white"
-          style={{ background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)' }}
-        >
+          style={{ background: 'linear-gradient(135deg, #f472b6, #fb923c)' }}>
           <Plus size={16} /> Add Food Court
         </motion.button>
       </motion.div>
@@ -123,13 +113,13 @@ const FoodCourt = () => {
             { label: 'Total Stalls', key: 'total_stalls', type: 'number' },
           ].map(({ label, key, type, required }) => (
             <div key={key}>
-              <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>{label}</label>
-              <input type={type} value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} required={required} className={inputClass} />
+              <label className="block text-sm font-medium text-pink-200 mb-1">{label}</label>
+              <input type={type} value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} required={required} className={inputClass} style={inputStyle} />
             </div>
           ))}
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={() => setModalOpen(false)} className={`flex-1 px-4 py-2.5 text-sm rounded-xl border transition-colors ${isDark ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>Cancel</button>
-            <button type="submit" className="flex-1 px-4 py-2.5 text-sm rounded-xl text-white font-medium" style={{ background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)' }}>{editing ? 'Update' : 'Create'}</button>
+            <button type="button" onClick={() => setModalOpen(false)} className="flex-1 px-4 py-2.5 text-sm rounded-xl text-pink-300 hover:text-white transition-colors" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>Cancel</button>
+            <button type="submit" className="flex-1 px-4 py-2.5 text-sm rounded-xl text-white font-medium" style={{ background: 'linear-gradient(135deg, #f472b6, #fb923c)' }}>{editing ? 'Update' : 'Create'}</button>
           </div>
         </form>
       </Modal>
